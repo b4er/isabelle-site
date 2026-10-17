@@ -1,0 +1,4 @@
+session Site = Pure +
+  description "Page commands for websites generated from Isabelle theories by 'isabelle site'."
+  options [document = false]
+  theories Site

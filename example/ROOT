@@ -1,0 +1,23 @@
+chapter "Examples"
+
+session Site_Example_Dev in "dev" = HOL +
+  description "A small Isabelle/HOL development as the subject of the example site."
+  options [export_theory]
+  theories
+    Tree
+    Monoids
+    Pointed
+
+session Site_Example in "site" = Site_Example_Dev +
+  description "
+    A minimal Isabelle documentation, one page per piece of the development, exercising every page command.
+  "
+  options [document = false]
+  sessions Site
+  theories
+    Example_Site
+
+    Index
+    Datatypes
+    Locales
+    Classes
