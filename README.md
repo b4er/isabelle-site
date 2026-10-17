@@ -1,4 +1,4 @@
-# html-site
+# isabelle-site
 
 A website generator for Isabelle sessions as an Isabelle system component:
 `isabelle site` generates plain HTML from Isabelle theories by reading types,

@@ -9,7 +9,7 @@ text \<open>
 \<close>
 
 setup \<open>
-  Site.title "html-site" #>
+  Site.title "isabelle-site" #>
   Site.parts [("guide", "Guide")] #>
   Site.links [("Isabelle", "https://isabelle.in.tum.de")] #>
   Site.sources ["Site_Example_Dev"] #>

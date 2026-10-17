@@ -2,7 +2,7 @@ theory Index
   imports Example_Site
 begin
 
-page (control: none) \<open>html-site example\<close>
+page (control: none) \<open>isabelle-site example\<close>
 
 text \<open>
   Three small pieces of Isabelle/HOL, each with its source and its facts as Isabelle prints
