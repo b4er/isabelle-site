@@ -77,13 +77,22 @@ object Stats {
       def skipped_in(text: String): Int =
         Token.explode(syntax.keywords, text).count(tok => tok.is_command && skipped(tok.source))
 
+      /* from the session's own database: a published session need not be an ancestor of the
+         site session, so the site's export context may not reach it */
+      def entities(context: Export.Session_Context, name: String): Export_Theory.Theory =
+        Exn.capture(store.theory(name)) match {
+          case Exn.Res(thy) => thy
+          case Exn.Exn(_) => Export_Theory.read_theory(context.theory(name))
+        }
+
       val theories =
+        using(Export.open_session_context0(store.store, session))(context =>
         for {
           node <- base.proper_session_theories
           name = node.theory
         } yield {
           val (consts, types, thms) =
-            Exn.capture(store.theory(name)) match {
+            Exn.capture(entities(context, name)) match {
               case Exn.Res(thy) => (thy.consts.length, thy.types.length, thy.thms.length)
               case Exn.Exn(_) => (0, 0, 0)
             }
@@ -94,7 +103,7 @@ object Stats {
             }
           Theory(name, lines = lines, consts = consts, types = types, thms = thms,
             skipped = skipped_proofs)
-        }
+        })
 
       /* the timing of the build that produced this session, as it recorded it */
       val timing = {

@@ -205,6 +205,9 @@ fun check_page_attrs ctxt attrs =
           if exists (fn (name, _, _) => name = a) axes then ()
           else error ("Unknown axis " ^ quote a ^ " in control: expected " ^
             commas (map #1 axes) ^ " or \"none\"" ^ Position.here pos));
+    fun check_rail (v, pos) =
+      if v = "none" then ()
+      else error ("Bad rail " ^ quote v ^ ": expected \"none\"" ^ Position.here pos);
     fun check_order (v, pos) =
       (case Int.fromString v of
         SOME _ => ()
@@ -220,11 +223,12 @@ fun check_page_attrs ctxt attrs =
       (case key of
         "part" => check_part value
       | "control" => check_control value
+      | "rail" => check_rail value
       | "order" => check_order value
       | "optional" => check_optional value
       | "class" => ()
       | _ => error ("Unknown page attribute " ^ quote key ^
-          ": expected part, order, control or optional" ^ Position.here (#2 value)))) attrs
+          ": expected part, order, control, rail or optional" ^ Position.here (#2 value)))) attrs
   end;
 
 

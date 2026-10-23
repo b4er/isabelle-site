@@ -340,9 +340,10 @@ class Render(
   /* the rail: this part's pages, with the current page's own headings under it. A part
      of one page lists that page's headings directly under the label, since the page's
      title would only repeat it; a part of one page without headings has no rail, since
-     it would list nothing, and the page is centred like the landing page */
+     it would list nothing, and the page is centred like the landing page; so is a page
+     marked "rail: none", whose own content already maps it */
   def rail(page: Page.Page): Option[XML.Elem] =
-    page.part.filterNot(id =>
+    page.part.filter(_ => page.rail).filterNot(id =>
       part_pages(id) match {
         case List(only) => !anchors(only).exists(_._1.level == 2)
         case _ => false

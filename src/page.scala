@@ -61,7 +61,8 @@ object Page {
       items: List[Item], is_index: Boolean, optional_limit: Double,
       part: Option[String],               // the part of the site this page belongs to
       order: Int,                         // its place within that part
-      control: Option[List[String]]       // axes whose dials the header offers; None = those its blocks mention
+      control: Option[List[String]],      // axes whose dials the header offers; None = those its blocks mention
+      rail: Boolean = true                // "rail: none" drops it, for a page that is its own map
   ) {
     def where(line: Int): String = path.implode + ":" + line + ": "
     def file_name: String = (if (is_index) "index" else name) + ".html"   // the landing page
@@ -197,7 +198,7 @@ object Page {
             else spec.split("\\s+").toList.filter(_.nonEmpty).map(a => config.axis(a).name))
         Some(Page(path, name, theory, h.title, rest,
           is_index = name == config.index, optional_limit = limit,
-          part = part, order = order, control = control))
+          part = part, order = order, control = control, rail = !attr("rail").contains("none")))
       case hs => error_at(path, 1, "More than one page command: lines " + commas(hs.map(_.line.toString)))
     }
   }
