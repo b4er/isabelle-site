@@ -5,7 +5,8 @@
 }
 
 html { font: 16px/1.55 "Isabelle DejaVu Sans", system-ui, sans-serif; }
-body { margin: 0; color: var(--fg); background: var(--bg); }
+body { margin: 0; color: var(--fg); background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; }
+body > header, body > footer { flex-shrink: 0; }
 h1, h2, h3, h4, [id] { scroll-margin-top: 4.5rem; }
 a { color: var(--accent); text-decoration: none; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
@@ -140,7 +141,7 @@ details.profile .profile-reset:hover { text-decoration: underline; }
   details.profile .profile-links, details.profile .profile-form { position: fixed; left: 1rem; right: 1rem; top: 3.5rem; width: auto; }
 }
 
-.layout { display: flex; gap: 3rem; align-items: flex-start; max-width: 72rem; margin: 0 auto; padding: 0 1.5rem 4rem; }
+.layout { display: flex; gap: 3rem; align-items: flex-start; width: 100%; max-width: 75rem; box-sizing: border-box; margin: 0 auto; padding: 0 1.5rem 4rem; flex: 1 0 auto; }
 main { flex: 1 1 auto; min-width: 0; max-width: 46rem; }
 .layout > main:only-child { margin-inline: auto; }
 nav.rail { flex: 0 0 14rem; position: sticky; top: 4.5rem; font-size: .92em; padding-top: 1.5rem; }
