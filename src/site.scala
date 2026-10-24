@@ -128,6 +128,20 @@ object Site {
           "theorems" -> stats.thms, "skipped" -> stats.skipped))))
 
 
+  /* the commit of the site's session directory, short, and whether tracked files have
+     local changes (untracked ones, like downloads and the output, do not count). Where git
+     cannot read the repository, as in a CI container that does not own the checkout, the
+     commit is GitHub Actions' GITHUB_SHA, a clean checkout; None without either */
+  private def read_commit(dir: Path): Option[(String, Boolean)] = {
+    val head = Isabelle_System.bash("git rev-parse --short HEAD", cwd = dir)
+    if (head.ok) {
+      val status = Isabelle_System.bash("git status --porcelain --untracked-files=no", cwd = dir)
+      Some((head.out.trim, status.ok && status.out.trim.nonEmpty))
+    }
+    else proper_string(Isabelle_System.getenv("GITHUB_SHA")).map(sha => (sha.take(7), false))
+  }
+
+
   /* main entry point */
 
   def site(
@@ -160,6 +174,10 @@ object Site {
       val stats_page = if (config.badge && !stats.is_empty) Some(Stats.page) else None
       val badge = stats_page.map(p => Stats.badge(stats, p.file_name))
 
+      val footer =
+        if (config.repository.isEmpty) None
+        else Some(Render.footer(config.repository, read_commit(store.session_dir)))
+
       /* the references page, generated from the site's bib and the citations on the pages */
       val bib = if (config.bib.isEmpty) Map.empty[String, Bib.Entry] else Bib.read(store.session_dir + Path.explode(config.bib))
       val refs_page = if (config.bib.isEmpty) None else Some(References.page)
@@ -181,11 +199,11 @@ object Site {
       for (state <- states) {
         render.prepare_state(state)
         for ((page, items) <- rendered)
-          render.write(page, items, states, state, assets, template, badge)
+          render.write(page, items, states, state, assets, template, badge, footer)
         for (page <- stats_page)
-          render.write(page, stats_html, states, state, assets, template, badge = None)
+          render.write(page, stats_html, states, state, assets, template, badge = None, footer)
         for (page <- refs_page)
-          render.write(page, refs_html, states, state, assets, template, badge)
+          render.write(page, refs_html, states, state, assets, template, badge, footer)
       }
       write_json(out, config, pages, states, stats)
 

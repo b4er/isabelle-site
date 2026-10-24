@@ -25,6 +25,7 @@ sig
   val index: string -> theory -> theory
   val parts: (string * string) list -> theory -> theory
   val links: (string * string) list -> theory -> theory
+  val repository: string -> theory -> theory
   val sources: string list -> theory -> theory
   val axes: (string * string * string list) list -> theory -> theory
   val profiles: (string * string list) list -> theory -> theory
@@ -78,6 +79,7 @@ structure Icon = Site_Setting(type T = string val empty = "");           (* site
 structure Index = Site_Setting(type T = string val empty = "Index");     (* theory of the landing page *)
 structure Parts = Site_Setting(type T = (string * string) list val empty = []);   (* id, label: the top-level navigation *)
 structure Links = Site_Setting(type T = (string * string) list val empty = []);   (* label, URL: nav items that leave the site *)
+structure Repository = Site_Setting(type T = string val empty = "");   (* URL: the footer links it and the commit the site was built from *)
 structure Sources = Site_Setting(type T = string list val empty = []);   (* sessions presented as HTML under src/ *)
 structure Axes = Site_Setting(type T = (string * string * string list) list val empty = []);   (* name, title, level names *)
 structure Profiles = Site_Setting(type T = (string * int list) list val empty = []);   (* name, one level per axis *)
@@ -103,6 +105,7 @@ val logo = Logo.put;
 val icon = Icon.put;
 val index = Index.put;
 val links = Links.put;
+val repository = Repository.put;
 val sources = Sources.put;
 val badge = Badge.put;
 val bib = Bib.put;
@@ -514,7 +517,7 @@ fun config thy =
   in
     XML.Elem (("config",
         [("title", Title.get thy), ("logo", Logo.get thy), ("icon", Icon.get thy),
-         ("index", Index.get thy), ("badge", if Badge.get thy then "true" else "false"),
+         ("index", Index.get thy), ("repository", Repository.get thy), ("badge", if Badge.get thy then "true" else "false"),
          ("bib", Bib.get thy), ("cite_audience", Cite_Audience.get thy),
          ("cite_style", (case Cite_Style.get thy of "" => "number" | s => s)),
          ("local_links", if Local_Links.get thy then "true" else "false"),

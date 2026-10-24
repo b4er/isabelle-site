@@ -38,6 +38,7 @@ object Config {
     index: String,
     parts: List[Part],
     links: List[Link],
+    repository: String,        // the repository URL for the footer, or "" for no footer
     sources: List[String],     // sessions presented as HTML under src/
     badge: Boolean,            // the "Machine checked" corner badge
     bib: String,               // session-dir relative .bib file the citations resolve in, or ""
@@ -92,7 +93,7 @@ object Config {
             name -> Command(name, external = prop(props, "external") == "true") }).toMap
         if (axes.isEmpty) error("Site configuration declares no axes (Site.axes in the site theory)")
         Config(prop(config_props, "title"), prop(config_props, "logo"), prop(config_props, "icon"),
-          prop(config_props, "index"), parts, links, sources,
+          prop(config_props, "index"), parts, links, repository = prop(config_props, "repository"), sources = sources,
           badge = prop(config_props, "badge") == "true",
           bib = prop(config_props, "bib"), cite_audience = prop(config_props, "cite_audience"),
           cite_style = prop(config_props, "cite_style"),

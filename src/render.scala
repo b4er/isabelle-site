@@ -485,7 +485,8 @@ class Render(
 
   /* the badge is the page's: the statistics page it links to is written without one */
   def write(page: Page.Page, items: XML.Body, states: List[Profile.State], state: Profile.State,
-      assets: List[String], template: String, badge: Option[XML.Elem]): Unit = {
+      assets: List[String], template: String, badge: Option[XML.Elem],
+      footer: Option[XML.Elem]): Unit = {
     val base_dir = state_dir(state)
     def href(target: Path): String = HTML.relative_href(target, base = Some(base_dir))
     def asset(name: String): String = href(out_dir + Path.explode("assets/" + name))
@@ -568,7 +569,8 @@ class Render(
           "page_title" -> text(page.title),
           "content" -> out(apply_state(items, state).map(relativize)),
           "pager" -> pager(page).map(p => out(List(p))).getOrElse(""),
-          "badge" -> badge.map(b => out(List(relativize(b)))).getOrElse(""))
+          "badge" -> badge.map(b => out(List(relativize(b)))).getOrElse(""),
+          "footer" -> footer.map(f => out(List(f))).getOrElse(""))
     /* one pass, so a hole's text inside a page's content is content, not a hole */
     val document =
       Render.hole.replaceAllIn(template, m =>
@@ -593,6 +595,22 @@ object Render {
   /* such a path as the src or href of raw HTML */
   val root_url: scala.util.matching.Regex =
     ("""\b((?:src|href)=")((?:""" + root_dirs.mkString("|") + ")/)").r
+
+  /* the footer: where the site comes from, the commit it was built from and the Isabelle
+     that checked it; the commit is marked when the working tree had local changes */
+  def footer(repository: String, commit: Option[(String, Boolean)]): XML.Elem = {
+    def link(href: String, body: XML.Body): XML.Elem = XML.Elem(Markup("a", List("href" -> href)), body)
+    val built =
+      commit match {
+        case Some((hash, dirty)) =>
+          HTML.text("Built from ") :::
+          List(link(repository + "/commit/" + hash, List(HTML.code(HTML.text(hash))))) :::
+          HTML.text((if (dirty) " with local changes" else "") + " by " + Isabelle_System.isabelle_name())
+        case None => HTML.text("Built by " + Isabelle_System.isabelle_name())
+      }
+    XML.Elem(Markup("footer", List("class" -> "site")),
+      List(HTML.span("built", built), link(repository, HTML.text("Source"))))
+  }
 
   /* {{name}} in the template */
   val hole: scala.util.matching.Regex = """\{\{([a-z_]+)\}\}""".r
@@ -619,6 +637,7 @@ object Render {
 {{pager}}
 </main>
 </div>
+{{footer}}
 {{badge}}
 </body>
 </html>

@@ -62,6 +62,7 @@ setup ‹
   Site.icon "assets/icon.svg" #>
   Site.parts [("start", "Get started"), ("docs", "Documentation")] #>
   Site.links [("GitHub", "https://example.com")] #>
+  Site.repository "https://github.com/me/my-project" #>   (* footer: source and commit *)
   Site.sources ["my_development"] #>
   Site.badge false #>
   Site.bib "document/root.bib" #>

@@ -156,6 +156,16 @@ nav.rail a[aria-current] { color: var(--fg); font-weight: 600; }
   .layout { flex-wrap: wrap; }
 }
 
+/* the footer: one quiet line on the left, clear of the badge in the right corner */
+footer.site {
+  max-width: 72rem; margin: 0 auto; padding: 1rem 1.5rem 2rem; box-sizing: border-box;
+  border-top: 1px solid var(--line); color: var(--muted); font-size: .85em;
+}
+footer.site .built::after { content: "\00a0\00b7\00a0"; }
+footer.site a { color: inherit; }
+footer.site a::after { content: none; }
+footer.site a:hover { color: var(--accent); }
+
 nav.pager { display: flex; gap: 1rem; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line); }
 nav.pager .next { margin-left: auto; }
 
