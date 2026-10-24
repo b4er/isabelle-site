@@ -369,7 +369,6 @@ class Render(
         }
       XML.Elem(Markup("nav", List("class" -> "rail", "aria-label" -> label)),
         List(XML.elem("h2", HTML.text(label)), list,
-          /* revealed by the script once there is a way back; "#top" is the header */
           XML.Elem(Markup("a", List("class" -> "to-top", "href" -> "#top", "hidden" -> "hidden")),
             HTML.text("Top"))))
     }
@@ -607,7 +606,7 @@ object Render {
 </head>
 <body{{body_attrs}}>
 <a class="skip" href="#main">Skip to content</a>
-<header id="top">
+<header>
 <a class="brand" href="{{index}}">{{brand}}</a>
 {{nav}}
 {{control}}
