@@ -366,15 +366,18 @@
     render();
     window.addEventListener('scroll', render_to_top, { passive: true });
 
-    /* looked up at the event, since a page swap replaces the control */
-    function control() { return document.querySelector('details.profile'); }
+    /* the header's dropdowns (the profile and menu), swap replaces the control */
+    function open_dropdowns() { return document.querySelectorAll('header details[open]'); }
     document.addEventListener('click', function (e) {
-      var d = control();
-      if (d && d.open && !d.contains(e.target)) d.open = false;
+      Array.prototype.forEach.call(open_dropdowns(), function (d) {
+        if (!d.contains(e.target)) d.open = false;
+      });
     });
     document.addEventListener('keydown', function (e) {
-      var d = control();
-      if (e.key === 'Escape' && d && d.open) { d.open = false; d.querySelector('summary').focus(); }
+      if (e.key !== 'Escape') return;
+      Array.prototype.forEach.call(open_dropdowns(), function (d) {
+        d.open = false; d.querySelector('summary').focus();
+      });
     });
 
     document.addEventListener('click', function (e) {

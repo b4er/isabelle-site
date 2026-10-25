@@ -337,6 +337,25 @@ class Render(
     XML.Elem(Markup("nav", List("class" -> "site", "aria-label" -> "Site")), part_items ::: link_items)
   }
 
+  /* the header on a narrow screen: the same links folded behind one button (+ badge) */
+  def menu(page: Page.Page, badge: Option[XML.Elem]): XML.Elem = {
+    val links = nav(page).body
+    val checked =
+      badge.toList.map({
+        case XML.Elem(Markup(name, props), body) =>
+          XML.Elem(Markup(name, props.map({
+            case ("class", c) => ("class", c.replace("checked", "menu-checked"))
+            case p => p
+          })), body)
+      })
+    XML.Elem(Markup("details", List("class" -> "menu")),
+      List(
+        XML.Elem(Markup("summary", List("aria-label" -> "Menu")),
+          List(HTML.span("menu-icon", Nil))),
+        XML.Elem(Markup("nav", List("class" -> "menu-links", "aria-label" -> "Site")),
+          links ::: checked)))
+  }
+
   /* the rail: this part's pages, with the current page's own headings under it. A part
      of one page lists that page's headings directly under the label, since the page's
      title would only repeat it; a part of one page without headings has no rail, since
@@ -564,6 +583,7 @@ class Render(
           "site" -> text(config.title),
           "brand" -> out(List(brand)),
           "nav" -> out(List(relativize(nav(page)))),
+          "menu" -> out(List(relativize(menu(page, badge)))),
           "control" -> profile_control(page, states, state, href).map(c => out(List(c))).getOrElse(""),
           "rail" -> rail(page).map(r => out(List(r))).getOrElse(""),
           "page_title" -> text(page.title),
@@ -627,6 +647,7 @@ object Render {
 <header>
 <a class="brand" href="{{index}}">{{brand}}</a>
 {{nav}}
+{{menu}}
 {{control}}
 </header>
 <div class="layout">
